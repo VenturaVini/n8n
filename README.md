@@ -4,10 +4,12 @@
 
 | Serviço | Porta | Descrição |
 |---------|-------|-----------|
-| **n8n** | 5678 | Plataforma de automação de workflows |
-| **Evolution API** | 8080 | API para WhatsApp Web |
-| **PostgreSQL** | 5432 | Banco de dados |
-| **Redis** | 6379 | Cache e filas de mensagens |
+| **n8n** (`1.119.1`) | 5678 | Plataforma de automação de workflows |
+| **Evolution API** (`v2.3.6`) | 8080 | API para WhatsApp Web |
+| **PostgreSQL** (`16.4-alpine`) | 5432 | Banco de dados |
+| **Redis** (`7.2-alpine`) | 6379 | Cache e filas de mensagens |
+
+> As imagens já estão com versões fixas para evitar surpresas com `latest`. Ajuste manualmente as tags no `docker-compose.yml` quando quiser atualizar e teste o banco de dados antes de trocar de versão.
 
 ## 🎯 Pré-requisitos
 
@@ -21,6 +23,19 @@
 - **Evolution API Docs**: http://localhost:8080/docs
 
 ## 🔐 Credenciais Padrão
+
+### Arquivo `.env`
+
+Você pode versionar o `.env` (informações de desenvolvimento) ou manter apenas o `env.example`, de acordo com sua preferência. Passos sugeridos:
+
+1. Copie `env.example` para `.env`.
+2. Ajuste os valores das credenciais (ex.: senhas e API keys).
+3. O `docker-compose` usa automaticamente os valores definidos ali ao subir os containers.
+
+Variáveis incluídas:
+- `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
+- `REDIS_PASSWORD`
+- `EVOLUTION_DB_NAME`, `EVOLUTION_API_KEY`
 
 ### PostgreSQL
 ```
@@ -44,7 +59,7 @@ API Key: evolution_api_key_12345
 
 ## 🔧 Personalizando Configurações
 
-Edite o arquivo `docker-compose.yml` e procure pelos comentários:
+Edite o arquivo `.env` para ajustar credenciais, e o `docker-compose.yml` caso precise alterar algo estrutural. Alguns pontos de atenção:
 
 ```yaml
 # Credenciais do banco (altere se necessário)
@@ -66,6 +81,12 @@ Se alterar as credenciais, lembre-se de ajustar em **todos os lugares** onde ela
 ### Parar os serviços
 ```bash
 docker-compose down
+```
+
+### Atualizar imagens e subir novamente
+```bash
+docker-compose pull
+docker-compose up -d
 ```
 
 ### Parar e remover volumes (⚠️ apaga dados!)

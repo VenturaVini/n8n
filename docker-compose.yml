@@ -3,14 +3,14 @@ version: '3.8'
 services:
   # PostgreSQL Database
   postgres:
-    image: postgres:latest
+    image: postgres:16.4-alpine
     container_name: postgres
     restart: unless-stopped
     environment:
       # Credenciais do banco (altere se necessário)
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres123
-      POSTGRES_DB: n8n
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+      POSTGRES_DB: ${POSTGRES_DB:-n8n}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -25,10 +25,10 @@ services:
 
   # Redis
   redis:
-    image: redis:latest
+    image: redis:7.2-alpine
     container_name: redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass redis123  # Senha do Redis (altere se necessário)
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redis123}"]  # Senha do Redis (altere se necessário)
     volumes:
       - redis_data:/data
     ports:
@@ -36,14 +36,14 @@ services:
     networks:
       - app_network
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "redis123", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis123}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   # n8n
   n8n:
-    image: n8nio/n8n:latest
+    image: n8nio/n8n:1.119.1
     container_name: n8n
     restart: unless-stopped
     environment:
@@ -51,19 +51,19 @@ services:
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=postgres
       - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=n8n
-      - DB_POSTGRESDB_USER=postgres
-      - DB_POSTGRESDB_PASSWORD=postgres123
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB:-n8n}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER:-postgres}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD:-postgres123}
       # Conexão com Redis (use a mesma senha do redis acima)
       - QUEUE_BULL_REDIS_HOST=redis
       - QUEUE_BULL_REDIS_PORT=6379
-      - QUEUE_BULL_REDIS_PASSWORD=redis123
+      - QUEUE_BULL_REDIS_PASSWORD=${REDIS_PASSWORD:-redis123}
       - EXECUTIONS_MODE=queue
-      - N8N_HOST=host.docker.internal
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
-      - WEBHOOK_URL=http://host.docker.internal:5678/
-      - GENERIC_TIMEZONE=America/Sao_Paulo
+      - N8N_HOST=${N8N_HOST:-host.docker.internal}
+      - N8N_PORT=${N8N_PORT:-5678}
+      - N8N_PROTOCOL=${N8N_PROTOCOL:-http}
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://host.docker.internal:5678/}
+      - GENERIC_TIMEZONE=${N8N_TIMEZONE:-America/Sao_Paulo}
     ports:
       - "5678:5678"
     volumes:
@@ -78,14 +78,14 @@ services:
 
   # Evolution API
   evolution:
-    image: evoapicloud/evolution-api:v2.3.1
+    image: evoapicloud/evolution-api:v2.3.6
     container_name: evolution_api
     restart: unless-stopped
     environment:
       - SERVER_TYPE=http
-      - SERVER_PORT=8080
-     # - SERVER_URL=http://host.docker.internal:8080
-      - LOG_LEVEL=ERROR,WARN,DEBUG,INFO
+      - SERVER_PORT=${EVOLUTION_PORT:-8080}
+      - SERVER_URL=${EVOLUTION_SERVER_URL:-}
+      - LOG_LEVEL=${EVOLUTION_LOG_LEVEL:-ERROR,WARN,DEBUG,INFO}
       - LOG_COLOR=true
       - LOG_BAILEYS=error
       - CORS_ORIGIN=*
@@ -93,7 +93,7 @@ services:
       - CORS_CREDENTIALS=true
       # Database (use as mesmas credenciais do postgres acima)
       - DATABASE_PROVIDER=postgresql
-      - DATABASE_CONNECTION_URI=postgresql://postgres:postgres123@postgres:5432/evolution?schema=public
+      - DATABASE_CONNECTION_URI=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${EVOLUTION_DB_NAME:-evolution}?schema=public
       - DATABASE_CONNECTION_CLIENT_NAME=evolution_api
       - DATABASE_SAVE_DATA_INSTANCE=true
       - DATABASE_SAVE_DATA_NEW_MESSAGE=true
@@ -104,8 +104,8 @@ services:
       - DATABASE_SAVE_DATA_HISTORIC=true
       # Redis (use a mesma senha do redis acima)
       - CACHE_REDIS_ENABLED=true
-      - CACHE_REDIS_URI=redis://:redis123@redis:6379
-      - CACHE_REDIS_PREFIX_KEY=evolution
+      - CACHE_REDIS_URI=redis://:${REDIS_PASSWORD:-redis123}@redis:6379
+      - CACHE_REDIS_PREFIX_KEY=${EVOLUTION_CACHE_REDIS_PREFIX_KEY:-evolution}
       - CACHE_REDIS_SAVE_INSTANCES=false
       - RABBITMQ_ENABLED=false
       - WEBSOCKET_ENABLED=false
@@ -120,7 +120,7 @@ services:
       - CONFIG_SESSION_PHONE_CLIENT=Evolution API
       - CONFIG_SESSION_PHONE_NAME=Chrome
       # API Key (ALTERE AQUI - importante!)
-      - AUTHENTICATION_API_KEY=evolution_api_key_12345
+      - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY:-evolution_api_key_12345}
       - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
       - TYPEBOT_ENABLED=false
       - CHATWOOT_ENABLED=false
