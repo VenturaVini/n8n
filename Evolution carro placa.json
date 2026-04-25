@@ -1,0 +1,1124 @@
+{
+  "name": "Evolution carro placa",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fcb759e9-6c5a-417c-9241-c67f70d7b237",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1376,
+        96
+      ],
+      "id": "80318eec-de69-4e44-9e45-b22751219236",
+      "name": "Webhook",
+      "webhookId": "fcb759e9-6c5a-417c-9241-c67f70d7b237"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b5c5d73c-5139-43a4-b4d8-c5bd61bf4bf5",
+              "name": "instancia",
+              "value": "={{ $json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "c5956da6-adf4-4085-8de4-dbba26233aba",
+              "name": "chat_id",
+              "value": "={{ $json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "4bf08bdd-454c-4ad6-8ae2-bf238d9cc6ff",
+              "name": "id",
+              "value": "={{ $json.body.data.key.remoteJidAlt }}",
+              "type": "string"
+            },
+            {
+              "id": "d2db2e59-4532-4654-998c-d63f37a25a9c",
+              "name": "envio_bot",
+              "value": "={{ $json.body.data.key.fromMe }}",
+              "type": "boolean"
+            },
+            {
+              "id": "71242154-9f96-4d4f-8a42-14988be6186f",
+              "name": "Tipo de mensagem",
+              "value": "={{ $json.body.data.messageType }}",
+              "type": "string"
+            },
+            {
+              "id": "e70a4aba-ba20-4638-a366-82b1a6b3b9d8",
+              "name": "id_da_mensagem",
+              "value": "={{ $json.body.data.key.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1072,
+        112
+      ],
+      "id": "10c556be-400d-430a-8bd4-8f0c78aa8560",
+      "name": "Padronizar mensagem"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "55cfee02-b404-4e6c-8f2d-ed2d23025889",
+              "leftValue": "={{ $json.envio_bot }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -848,
+        112
+      ],
+      "id": "a40e1ea7-a001-44ea-ace3-5c74f3eb7f22",
+      "name": "Verifica se a mensagem é do bot"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        0
+      ],
+      "id": "02dbdcc9-2f80-4cd9-9449-c136144b1444",
+      "name": "Finaliza o processo"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Conversas }}",
+        "options": {
+          "systemMessage": "=Você é Vinicius, um agente de IA assistente virtual prestativo e direto.\n\nse ele ver que essa variavel abaixo esta com image\nx = {{ $('Padronizar mensagem').item.json.id_da_mensagem }}\n\nse x, acima tive image so retorne esse texto mesmo puro\n\nx = {{ $('Mensagem').item.json.Mensagem }}\nretorne x\n\nPERSONALIDADE:\n- Tom amigável, acolhedor e direto\n- Explica tudo de forma resumida e fácil de entender\n\nSEU OBJETIVO:\n- Receber qualquer palavra, termo ou pergunta\n- Explicar de forma rápida e resumida o que é aquilo\n- Usar exemplos simples do dia a dia quando necessário\n\nFORMATO DAS RESPOSTAS:\n- Resposta curta e direta\n- No máximo 3 a 4 linhas\n- Sem enrolação, vai direto ao ponto\n- Se necessário, dê um exemplo prático rápido\n\nRESTRIÇÕES:\n- Não invente informações\n- Não escreva textões, seja sempre resumido\n- Se não souber, diga: \"Essa eu não sei, tenta pesquisar melhor!\"\n- Não fuja do tema\n\nAPRESENTAÇÃO INICIAL:\n- Deve ser sempre diferente e aleatória a cada conversa\n- Seja criativo mas natural\n- Mantenha curta, no máximo 2 linhas\n\n\nnao coloque isso nas plavras\n\n **O que está na imagem:**\n\ndeixei do jeito que ta por que ele quebra quando enviar no whatsapp\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        2768,
+        576
+      ],
+      "id": "bd0f8e7f-8e9f-4baf-b0ce-d95ac07fe429",
+      "name": "AI Agent",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 2000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2736,
+        336
+      ],
+      "id": "22811011-8eca-4f8e-83dc-5b9d85fb5a61",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "p2OESG4o6hZDIpNr",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Padronizar mensagem').item.json.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        2864,
+        336
+      ],
+      "id": "508410f5-3f22-4e1c-b309-3746516b1280",
+      "name": "Redis Chat Memory",
+      "credentials": {
+        "redis": {
+          "id": "8Keq8KSDCJZ3B2z0",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('Padronizar mensagem').item.json.instancia }}",
+        "remoteJid": "={{ $('Padronizar mensagem').item.json.id }}",
+        "messageText": "={{ $('Conversas Formatadas').item.json.Conversas }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        3072,
+        112
+      ],
+      "id": "50612f38-e0e4-4cba-9b9b-6bed108eda07",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "uSEaM1CXB6L4Rtrr",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('Padronizar mensagem').item.json.id }}_buffer",
+        "messageData": "={{ $json.Mensagem }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        944,
+        304
+      ],
+      "id": "34042c4e-49bb-4f07-a16f-640812d23d2c",
+      "name": "Adicionando mensagens na lista",
+      "credentials": {
+        "redis": {
+          "id": "8Keq8KSDCJZ3B2z0",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1392,
+        304
+      ],
+      "id": "fa9da4a9-4d41-4c0a-b7e5-97d031c05910",
+      "name": "Wait",
+      "webhookId": "f6c60e8a-ae30-4768-8f46-8e3d934c7896"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "Conversas",
+        "key": "={{ $('Padronizar mensagem').item.json.id }}_buffer",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        304
+      ],
+      "id": "8a19f15a-3feb-400a-bf31-e1f3053ee8f1",
+      "name": "Coletando mensagens da lista - Buffer 1",
+      "credentials": {
+        "redis": {
+          "id": "8Keq8KSDCJZ3B2z0",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "Conversas",
+        "key": "={{ $('Padronizar mensagem').item.json.id }}_buffer",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        304
+      ],
+      "id": "69b0cacf-29b1-43b7-9e74-484d17c0d0fe",
+      "name": "Coletando mensagens da lista - Buffer 2",
+      "credentials": {
+        "redis": {
+          "id": "8Keq8KSDCJZ3B2z0",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d2772605-ac07-4c58-aeae-bbea357c6eb7",
+              "leftValue": "={{ $json.Conversas.last() }}",
+              "rightValue": "={{ $('Coletando mensagens da lista - Buffer 1').item.json.Conversas.last() }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1840,
+        304
+      ],
+      "id": "acc7349f-22d7-4785-9294-0cb1686f23ed",
+      "name": "Verifica se o buffer 2 é igual ao 1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        304
+      ],
+      "id": "0800bc14-aaae-49b0-9a4b-a5b5a146dc3e",
+      "name": "Finaliza o processo1"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $('Padronizar mensagem').item.json.id }}_buffer"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        112
+      ],
+      "id": "41ac5c7b-c117-485b-904f-e20dbaba809e",
+      "name": "Deletar o buffer",
+      "credentials": {
+        "redis": {
+          "id": "8Keq8KSDCJZ3B2z0",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b976a53-6f14-4dde-a2b1-62c6d4668ae9",
+              "name": "Conversas",
+              "value": "={{ $json.Conversas.join(\"\\n\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2288,
+        112
+      ],
+      "id": "8103dc3c-57bb-4f43-b4b5-67dd9acff6fd",
+      "name": "Conversas Formatadas"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Tipo de mensagem'] }}",
+                    "rightValue": "conversation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "1e6a30e1-ce3e-4b19-b8b9-a4af0e069cd9"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d0dc23d2-420e-4168-a6a4-6dbb9baf3f08",
+                    "leftValue": "={{ $json['Tipo de mensagem'] }}",
+                    "rightValue": "audioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "95a09107-01f7-4104-b95f-e872f2e92e23",
+                    "leftValue": "={{ $json['Tipo de mensagem'] }}",
+                    "rightValue": "imageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Imagem"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -624,
+        192
+      ],
+      "id": "3dcf5bd1-92fc-418b-ab3d-122435714dfb",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7481363-1dd7-4612-980c-1f9986530dc9",
+              "name": "instancia",
+              "value": "={{ $('Padronizar mensagem').item.json.instancia }}",
+              "type": "string"
+            },
+            {
+              "id": "07324f06-aa97-460e-80f2-df5c708128bc",
+              "name": "chat_id",
+              "value": "={{ $('Padronizar mensagem').item.json.chat_id }}",
+              "type": "string"
+            },
+            {
+              "id": "b1ea0f32-d068-4b07-9070-1a60f1370d13",
+              "name": "id",
+              "value": "={{ $('Padronizar mensagem').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "09a8a55d-8582-49f6-a93e-9118933380d1",
+              "name": "Mensagem",
+              "value": "={{ $('Webhook').item.json.body.data.message.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        16
+      ],
+      "id": "469f5fea-4dcb-4c25-91cc-4052703df1ed",
+      "name": "Organizar dados TEXTO"
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "get-media-base64",
+        "instanceName": "={{ $('Padronizar mensagem').item.json.instancia }}",
+        "messageId": "={{ $('Padronizar mensagem').item.json.id_da_mensagem }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        208
+      ],
+      "id": "ba4b5fd2-17cd-4f82-a074-3bf78be9a12c",
+      "name": "Obter midia em base64",
+      "credentials": {
+        "evolutionApi": {
+          "id": "uSEaM1CXB6L4Rtrr",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64",
+        "options": {
+          "fileName": "audio.mp3",
+          "mimeType": "audio/mpeg"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        208
+      ],
+      "id": "e72b1fe4-f9f0-4936-a227-805cef3b6ccd",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        272,
+        208
+      ],
+      "id": "92b72939-905a-46ee-a304-753355aeef56",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "p2OESG4o6hZDIpNr",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "343ad0a1-678e-4a0f-84d0-34e47934711d",
+              "name": "Mensagem",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        208
+      ],
+      "id": "55bc58f2-6d21-487c-ae9c-31ee119b6f1d",
+      "name": "Mensagem AUDIO"
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "get-media-base64",
+        "instanceName": "={{ $('Padronizar mensagem').item.json.instancia }}",
+        "messageId": "={{ $('Padronizar mensagem').item.json.id_da_mensagem }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        400
+      ],
+      "id": "e5435e56-f65c-40e4-b19e-3315d09ffe75",
+      "name": "Obter m dia em base64",
+      "credentials": {
+        "evolutionApi": {
+          "id": "uSEaM1CXB6L4Rtrr",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8a863b4d-b664-4bc9-9d53-ca30a6387ef6",
+              "name": "base64",
+              "value": "={{ $json.data.base64 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -176,
+        208
+      ],
+      "id": "0f9e8b4b-a15a-4a26-947a-57107e673fc7",
+      "name": "Base64"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8a863b4d-b664-4bc9-9d53-ca30a6387ef6",
+              "name": "base64",
+              "value": "={{ $json.data.base64 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -176,
+        400
+      ],
+      "id": "3d52e49e-6f5c-4bbe-bde1-d929714a66ef",
+      "name": "Base"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64",
+        "options": {
+          "fileName": ""
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        400
+      ],
+      "id": "d6c62e50-c0eb-4600-aa64-8930928ee560",
+      "name": "convertendo para foto"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "Você é um sistema de OCR especializado em placas veiculares brasileiras.\n\nTAREFA:\nAnalise a imagem e extraia a placa do veículo mais visível.\n\nFORMATOS DE PLACA VÁLIDOS:\n- Padrão antigo: ABC-1234 (3 letras, hífen, 4 números)\n- Padrão Mercosul: ABC1D23 (3 letras, 1 número, 1 letra, 2 números)\n\nREGRAS:\n1. Foque APENAS na placa do veículo\n2. Se houver múltiplos veículos, pegue a placa mais legível\n3. Retorne SOMENTE a placa, sem explicações\n4. Use letras maiúsculas\n5. Não inclua hífen no resultado final\n\nRETORNO:\n- Se encontrar a placa: retorne apenas a placa (ex: ABC1234 ou ABC1D23)\n- Se não encontrar ou estiver ilegível: retorne apenas: nao\n\nResponda com UMA ÚNICA PALAVRA: a placa ou \"nao\"",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        272,
+        400
+      ],
+      "id": "fcb6df24-1da0-40f9-9b67-eae27440cf50",
+      "name": "Analyze an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "p2OESG4o6hZDIpNr",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4a977715-5099-40c4-a6ac-6f9c4fe4c012",
+              "name": "Mensagem",
+              "value": "={{ $json.Mensagem }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        304
+      ],
+      "id": "e011c553-9b97-4b3d-b7df-e87c30ede4b5",
+      "name": "Mensagem"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "343ad0a1-678e-4a0f-84d0-34e47934711d",
+              "name": "Mensagem",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        400
+      ],
+      "id": "e20e7761-fa79-4619-8f78-af063827bb76",
+      "name": "Mensagem FOTO"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "307dc123-091a-4eb1-9f72-c4319488df00",
+              "leftValue": "={{ $json.Conversas }}",
+              "rightValue": "nao",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2496,
+        112
+      ],
+      "id": "6c96c2c0-1e30-4f17-bfe6-d86e16188766",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2848,
+        -48
+      ],
+      "id": "d9f313f5-30be-4fec-b1aa-2f47b3451af7",
+      "name": "Finaliza o processo2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Padronizar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Padronizar mensagem": {
+      "main": [
+        [
+          {
+            "node": "Verifica se a mensagem é do bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica se a mensagem é do bot": {
+      "main": [
+        [
+          {
+            "node": "Finaliza o processo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Adicionando mensagens na lista": {
+      "main": [
+        [
+          {
+            "node": "Coletando mensagens da lista - Buffer 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Coletando mensagens da lista - Buffer 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coletando mensagens da lista - Buffer 1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coletando mensagens da lista - Buffer 2": {
+      "main": [
+        [
+          {
+            "node": "Verifica se o buffer 2 é igual ao 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica se o buffer 2 é igual ao 1": {
+      "main": [
+        [
+          {
+            "node": "Deletar o buffer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finaliza o processo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deletar o buffer": {
+      "main": [
+        [
+          {
+            "node": "Conversas Formatadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversas Formatadas": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [],
+        [
+          {
+            "node": "Obter m dia em base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organizar dados TEXTO": {
+      "main": [
+        [
+          {
+            "node": "Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obter midia em base64": {
+      "main": [
+        [
+          {
+            "node": "Base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Mensagem AUDIO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem AUDIO": {
+      "main": [
+        [
+          {
+            "node": "Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base64": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obter m dia em base64": {
+      "main": [
+        [
+          {
+            "node": "Base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base": {
+      "main": [
+        [
+          {
+            "node": "convertendo para foto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "convertendo para foto": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image": {
+      "main": [
+        [
+          {
+            "node": "Mensagem FOTO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Adicionando mensagens na lista",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem FOTO": {
+      "main": [
+        [
+          {
+            "node": "Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Finaliza o processo2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "53c9597e-d6c9-45ab-a2cd-1d94234f83af",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f6497938e4ea4a6f905e03a33b983b1ec8ea865b53d623ac3961f7496ea3c610"
+  },
+  "id": "7yPOlpJVFtQUn8Q0",
+  "tags": []
+}
